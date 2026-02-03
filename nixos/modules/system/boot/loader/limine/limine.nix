@@ -224,6 +224,13 @@ in
         '';
       };
 
+      autoGenerateKeys = lib.mkEnableOption null // {
+        description = "Generate keys automatically when not exists during bootloader installation";
+      };
+      autoEnrollKeys = lib.mkEnableOption null // {
+        description = "Enroll automatically created keys";
+      };
+
       createAndEnrollKeys = lib.mkEnableOption null // {
         internal = true;
         description = ''
@@ -484,6 +491,15 @@ in
       services.fwupd.uefiCapsuleSettings = {
         DisableShimForSecureBoot = true;
       };
+    })
+    (lib.mkIf (cfg.enable && cfg.secureBoot.enable && cfg.secureBoot.autoEnrollKeys) {
+      assertions = [
+        {
+          assertion = cfg.autoGenerateKeys;
+          message = "This option is meaningless with autoGenerateKeys disabled";
+        }
+      ];
+      boot.loader.limine.secureBoot.autoGenerateKeys = true;
     })
   ];
 }
