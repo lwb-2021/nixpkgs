@@ -36,6 +36,11 @@ stdenvNoCC.mkDerivation rec {
     done
   '';
 
+  # Drop dangling symlinks from the upstream icon set.
+  postFixup = ''
+    find $out/share/icons -xtype l -delete
+  '';
+
   meta = {
     description = "Icon pack based upon Faenza and Mint-X";
     homepage = "https://github.com/madmaxms/iconpack-jade";
